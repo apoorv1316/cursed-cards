@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: cursed-cards-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: CLIENT_URL
+        value: https://client-q14gyw2lr-apoorv1316s-projects.vercel.app
+      - key: NODE_ENV
+        value: production
