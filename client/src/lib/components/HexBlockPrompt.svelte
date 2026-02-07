@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade, fly, scale } from 'svelte/transition';
   import { elasticOut } from 'svelte/easing';
+  import { onDestroy } from 'svelte';
   import { gameState } from '../stores/gameStore';
   import { getSocket } from '../stores/socketStore';
   import { CARD_INFO } from '../game/cardTypes';
@@ -27,6 +28,8 @@
       if (timeLeft <= 0) clearInterval(interval);
     }, 100);
   }
+
+  onDestroy(() => clearInterval(interval));
 
   function useHexBlock() {
     const socket = getSocket();

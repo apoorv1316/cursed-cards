@@ -25,40 +25,55 @@
 
   $: roomCode = $page.params.roomCode;
 
+  function onGameState(data: GameStateForPlayer) {
+    gameState.set(data);
+  }
+  function onCardPlayed({ playerName, card }: { playerName: string; card: Card }) {
+    showNotification(`${playerName} played ${card.name}`);
+  }
+  function onDemonDrawn({ playerName }: { playerName: string }) {
+    showNotification(`${playerName} drew a Demon's Bargain!`, 5000);
+  }
+  function onPlayerEliminated({ playerName }: { playerName: string }) {
+    showNotification(`${playerName} has been eliminated!`, 4000);
+  }
+  function onCounterSpellUsed({ playerName }: { playerName: string }) {
+    showNotification(`${playerName} used Counter Spell!`, 3000);
+  }
+  function onHexBlockUsed({ blockerName }: { blockerName: string; blockedAction: string }) {
+    showNotification(`${blockerName} blocked with Hex Block!`, 3000);
+  }
+  function onPlayerLeft({ playerName }: { playerName: string }) {
+    showNotification(`${playerName} disconnected`);
+  }
+
   onMount(() => {
     const socket = connectSocket();
 
-    socket.on('game_state', (data: GameStateForPlayer) => {
-      gameState.set(data);
-    });
-
-    socket.on('card_played', ({ playerName, card }: { playerName: string; card: Card }) => {
-      showNotification(`${playerName} played ${card.name}`);
-    });
-
-    socket.on('demon_drawn', ({ playerName }: { playerName: string }) => {
-      showNotification(`${playerName} drew a Demon's Bargain!`, 5000);
-    });
-
-    socket.on('player_eliminated', ({ playerName }: { playerName: string }) => {
-      showNotification(`${playerName} has been eliminated!`, 4000);
-    });
-
-    socket.on('counter_spell_used', ({ playerName }: { playerName: string }) => {
-      showNotification(`${playerName} used Counter Spell!`, 3000);
-    });
-
-    socket.on('hex_block_used', ({ blockerName, blockedAction }: { blockerName: string; blockedAction: string }) => {
-      showNotification(`${blockerName} blocked with Hex Block!`, 3000);
-    });
-
-    socket.on('player_left', ({ playerName }: { playerName: string }) => {
-      showNotification(`${playerName} disconnected`);
-    });
+    socket.on('game_state', onGameState);
+    socket.on('card_played', onCardPlayed);
+    socket.on('demon_drawn', onDemonDrawn);
+    socket.on('player_eliminated', onPlayerEliminated);
+    socket.on('counter_spell_used', onCounterSpellUsed);
+    socket.on('hex_block_used', onHexBlockUsed);
+    socket.on('player_left', onPlayerLeft);
 
     // If no game state, redirect to home
     if (!$gameState) {
       goto('/');
+    }
+  });
+
+  onDestroy(() => {
+    const socket = getSocket();
+    if (socket) {
+      socket.off('game_state', onGameState);
+      socket.off('card_played', onCardPlayed);
+      socket.off('demon_drawn', onDemonDrawn);
+      socket.off('player_eliminated', onPlayerEliminated);
+      socket.off('counter_spell_used', onCounterSpellUsed);
+      socket.off('hex_block_used', onHexBlockUsed);
+      socket.off('player_left', onPlayerLeft);
     }
   });
 

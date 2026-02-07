@@ -113,43 +113,41 @@ export function shuffleDeck(deck: Card[]): Card[] {
 export function dealHands(deck: Card[], playerCount: number): { hands: Card[][]; remainingDeck: Card[] } {
   // Separate demon's bargain cards
   const demons = deck.filter(c => c.type === 'demons_bargain');
-  let safeDeck = deck.filter(c => c.type !== 'demons_bargain');
+  let pool = shuffleDeck(deck.filter(c => c.type !== 'demons_bargain'));
 
-  // Ensure enough counter spells for guarantee
-  const counterSpells = safeDeck.filter(c => c.type === 'counter_spell');
-  const otherCards = safeDeck.filter(c => c.type !== 'counter_spell');
+  // Pull out counter spells to guarantee one per player
+  const counterSpells: Card[] = [];
+  const rest: Card[] = [];
+  for (const card of pool) {
+    if (card.type === 'counter_spell' && counterSpells.length < playerCount) {
+      counterSpells.push(card);
+    } else {
+      rest.push(card);
+    }
+  }
+
+  // Shuffle the remaining pool
+  const drawPool = shuffleDeck(rest);
 
   const hands: Card[][] = [];
-
   for (let p = 0; p < playerCount; p++) {
     const hand: Card[] = [];
 
-    // Add 1 guaranteed counter spell
+    // Guarantee 1 counter spell
     if (counterSpells.length > 0) {
       hand.push(counterSpells.pop()!);
     }
 
-    // Fill rest of hand from other cards + remaining counter spells
-    const drawPool = [...otherCards, ...counterSpells];
-    // Shuffle draw pool
-    for (let i = drawPool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [drawPool[i], drawPool[j]] = [drawPool[j], drawPool[i]];
-    }
-
+    // Fill rest from draw pool
     while (hand.length < 7 && drawPool.length > 0) {
       hand.push(drawPool.pop()!);
     }
 
     hands.push(hand);
-
-    // Remove dealt cards from safeDeck
-    const dealtIds = new Set(hand.map(c => c.id));
-    safeDeck = safeDeck.filter(c => !dealtIds.has(c.id));
   }
 
-  // Remaining deck = undealt safe cards + demons, then shuffle
-  const remainingDeck = shuffleDeck([...safeDeck, ...demons]);
+  // Remaining deck = undealt draw pool cards + any extra counter spells + demons, then shuffle
+  const remainingDeck = shuffleDeck([...drawPool, ...counterSpells, ...demons]);
 
   return { hands, remainingDeck };
 }

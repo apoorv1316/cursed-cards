@@ -50,7 +50,7 @@
   }
 
   function copyCode() {
-    navigator.clipboard?.writeText(roomCode);
+    if (roomCode) navigator.clipboard?.writeText(roomCode);
     copied = true;
     setTimeout(() => copied = false, 2000);
   }
