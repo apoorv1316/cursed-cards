@@ -17,7 +17,7 @@
 <button
   class="card-wrapper relative flex-shrink-0 transition-all duration-200 select-none
     {small ? 'w-20 h-28' : 'w-36 h-52'}
-    {playable ? 'cursor-pointer hover:-translate-y-3 active:scale-95' : 'cursor-default'}
+    {playable ? 'cursor-pointer focus:-translate-y-3 active:scale-95' : 'cursor-default'}
     {selected ? 'ring-2 ring-cursed-accent -translate-y-4 shadow-lg shadow-purple-500/30' : ''}"
   on:click={() => onClick?.()}
   on:pointerenter={() => onHover?.(true)}

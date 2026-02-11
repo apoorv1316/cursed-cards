@@ -108,8 +108,8 @@
         <button
           class="play-btn px-10 py-2.5 rounded-xl text-sm font-bold transition-all
             hover:brightness-125 active:scale-95"
-          style="background: {info.color}; color: white;
-            --btn-glow: {info.color};"
+          style="background: white; color: black; font-weight: bold;
+            --btn-glow: black;"
           in:fly={{ y: 20, duration: 250, delay: 100, easing: cubicOut }}
           on:click={playCard}
         >
