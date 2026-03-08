@@ -152,15 +152,7 @@
   <!-- ══════ CONTENT ══════ -->
 
   <!-- Error banner -->
-  {#if $socketError}
-    <div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl
-      bg-red-900/90 border border-red-500/50 text-red-200 text-sm font-medium
-      shadow-lg shadow-red-900/30 max-w-sm text-center"
-      transition:fly={{ y: -20, duration: 300 }}>
-      {$socketError}
-    </div>
-  {/if}
-
+ 
   {#if mode === 'menu'}
     <!-- Splash / Main Menu -->
     <div class="text-center relative z-20" in:fade={{ duration: 500 }}>
